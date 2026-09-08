@@ -38,8 +38,8 @@
 #define do_fuvitech false
 
 #define ph_rika500_12 true
-#define ec_rika500_13 true
-#define do_rika500_04 true
+#define ec_rika500_13 false
+#define do_rika500_04 false
 
 #define duty_cycles_ph 50
 #define duty_cycles_ec 50
