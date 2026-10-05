@@ -122,6 +122,17 @@ extern float data_dissolved_oxygen_fuvitech;
 extern float data_dissolved_oxygen_rika;
 extern float data_temperature_do_rika;
 
+extern bool sensor_ph_valid;
+extern bool sensor_ph_temperature_valid;
+extern bool sensor_ec_conductivity_valid;
+extern bool sensor_ec_resistivity_valid;
+extern bool sensor_ec_temperature_valid;
+extern bool sensor_ec_tds_valid;
+extern bool sensor_ec_salinity_valid;
+extern bool sensor_do_valid;
+extern volatile uint16_t sensor_rx_length;
+extern volatile bool sensor_rx_received;
+
 
 extern bool is_pb_done;
 extern volatile uint8_t motor_ph_plus;

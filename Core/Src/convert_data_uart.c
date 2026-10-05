@@ -167,6 +167,8 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
       uart5_rx_start_to_idle(); // re-arm
   }
   else if (huart->Instance == USART2) {
+        sensor_rx_length = Size;
+        sensor_rx_received = true;
         HAL_UARTEx_ReceiveToIdle_IT(&huart2, (uint8_t *)rx_buffer_fuvitech,100);
   }
   else if (huart->Instance == UART4) {

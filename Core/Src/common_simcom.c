@@ -428,6 +428,18 @@ bool subscribe_mqtt_via_gsm(void) {
 #endif
 }
 
+static void json_add_sensor_value(cJSON *json, const char *key, float value,
+                                  bool valid) {
+  char value_string[16];
+
+  if (!valid) {
+    cJSON_AddNullToObject(json, key);
+    return;
+  }
+  snprintf(value_string, sizeof(value_string), "%.2f", value);
+  cJSON_AddStringToObject(json, key, value_string);
+}
+
 void create_JSON(void) {
   cJSON *json = cJSON_CreateObject();
   rssi = read_signal_quality();
@@ -450,12 +462,10 @@ void create_JSON(void) {
 //      NVIC_SystemReset();
 //  }
 
-  char data_measured_ph_fuvitech_str[16];
-  char data_temperature_ph_fuvitech_str[16];
-  snprintf(data_measured_ph_fuvitech_str, sizeof(data_measured_ph_fuvitech_str), "%.2f", data_measured_ph_fuvitech);
-  snprintf(data_temperature_ph_fuvitech_str, sizeof(data_temperature_ph_fuvitech_str), "%.2f", data_temperature_ph_fuvitech);
-  cJSON_AddStringToObject(json, "solPH", data_measured_ph_fuvitech_str);
-  cJSON_AddStringToObject(json, "solT", data_temperature_ph_fuvitech_str);
+  json_add_sensor_value(json, "solPH", data_measured_ph_fuvitech,
+                        sensor_ph_valid);
+  json_add_sensor_value(json, "solT", data_temperature_ph_fuvitech,
+                        sensor_ph_temperature_valid);
 #endif
 
 
@@ -471,39 +481,22 @@ void create_JSON(void) {
 //      NVIC_SystemReset();
 //  }
 
-  char data_measured_ph_fuvitech_str[16];
-  char data_temperature_ph_fuvitech_str[16];
-  snprintf(data_measured_ph_fuvitech_str, sizeof(data_measured_ph_fuvitech_str), "%.2f", data_measured_ph_fuvitech);
-  snprintf(data_temperature_ph_fuvitech_str, sizeof(data_temperature_ph_fuvitech_str), "%.2f", data_temperature_ph_fuvitech);
-  cJSON_AddStringToObject(json, "solPH", data_measured_ph_fuvitech_str);
-  cJSON_AddStringToObject(json, "solT", data_temperature_ph_fuvitech_str);
+  json_add_sensor_value(json, "solPH", data_measured_ph_fuvitech,
+                        sensor_ph_valid);
+  json_add_sensor_value(json, "solT", data_temperature_ph_fuvitech,
+                        sensor_ph_temperature_valid);
 #endif
 #if ec_fuvitech
-  if(data_conductivity_ec_fuvitech<1){
-      check_sensor_ec_error++;
-  }
-  else{
-      check_sensor_ec_error=0;
-  }
-  if(check_sensor_ec_error>=3){
-      NVIC_SystemReset();
-  }
-  char data_conductivity_ec_fuvitech_str[16];
-  char data_tds_ec_fuvitech_str[16];
-  char data_resistivity_ec_fuvitech_str[16];
-  char data_salinity_ec_fuvitech_str[16];
-  char data_temperature_ec_fuvitech_str[16];
-  snprintf(data_conductivity_ec_fuvitech_str, sizeof(data_conductivity_ec_fuvitech_str), "%.2f", data_conductivity_ec_fuvitech);
-  snprintf(data_tds_ec_fuvitech_str, sizeof(data_tds_ec_fuvitech_str), "%.2f", data_tds_ec_fuvitech);
-  snprintf(data_resistivity_ec_fuvitech_str, sizeof(data_resistivity_ec_fuvitech_str), "%.2f", data_resistivity_ec_fuvitech);
-  snprintf(data_salinity_ec_fuvitech_str, sizeof(data_salinity_ec_fuvitech_str), "%.2f", data_salinity_ec_fuvitech);
-  snprintf(data_temperature_ec_fuvitech_str, sizeof(data_temperature_ec_fuvitech_str), "%.2f", data_temperateure_ec_fuvitech);
-  //   data EC Fuvitech
-  cJSON_AddStringToObject(json, "solEC", data_conductivity_ec_fuvitech_str);
-  cJSON_AddStringToObject(json, "solTDS", data_tds_ec_fuvitech_str);
-  cJSON_AddStringToObject(json, "solRes", data_resistivity_ec_fuvitech_str);
-  cJSON_AddStringToObject(json, "solSal", data_salinity_ec_fuvitech_str);
-  cJSON_AddStringToObject(json, "solT", data_temperature_ec_fuvitech_str);
+  json_add_sensor_value(json, "solEC", data_conductivity_ec_fuvitech,
+                        sensor_ec_conductivity_valid);
+  json_add_sensor_value(json, "solTDS", data_tds_ec_fuvitech,
+                        sensor_ec_tds_valid);
+  json_add_sensor_value(json, "solRes", data_resistivity_ec_fuvitech,
+                        sensor_ec_resistivity_valid);
+  json_add_sensor_value(json, "solSal", data_salinity_ec_fuvitech,
+                        sensor_ec_salinity_valid);
+  json_add_sensor_value(json, "solT", data_temperateure_ec_fuvitech,
+                        sensor_ec_temperature_valid);
 #endif
 #if ec_rika500_13
 //  if(data_conductivity_ec_fuvitech<1){
@@ -515,22 +508,14 @@ void create_JSON(void) {
 //  if(check_sensor_ec_error>=3){
 //      NVIC_SystemReset();
 //  }
-  char data_conductivity_ec_fuvitech_str[16];
-  char data_resistivity_ec_fuvitech_str[16];
-  char data_temperature_ec_fuvitech_str[16];
-  char data_tds_ec_fuvitech_str[16];
-  char data_salinity_ec_fuvitech_str[16];
-  snprintf(data_conductivity_ec_fuvitech_str, sizeof(data_conductivity_ec_fuvitech_str), "%.2f", data_conductivity_ec_fuvitech);
-  snprintf(data_resistivity_ec_fuvitech_str, sizeof(data_resistivity_ec_fuvitech_str), "%.2f", data_resistivity_ec_fuvitech);
-  snprintf(data_temperature_ec_fuvitech_str, sizeof(data_temperature_ec_fuvitech_str), "%.2f", data_temperateure_ec_fuvitech);
-  snprintf(data_tds_ec_fuvitech_str, sizeof(data_tds_ec_fuvitech_str), "%.2f", data_tds_ec_fuvitech);
-  snprintf(data_salinity_ec_fuvitech_str, sizeof(data_salinity_ec_fuvitech_str), "%.2f", data_salinity_ec_fuvitech);
-  //   data EC Fuvitech
-  cJSON_AddStringToObject(json, "solEC", data_conductivity_ec_fuvitech_str);
-  cJSON_AddStringToObject(json, "solRes", data_resistivity_ec_fuvitech_str);
-  cJSON_AddStringToObject(json, "solTDS", data_tds_ec_fuvitech_str);
-  cJSON_AddStringToObject(json, "solSal", data_salinity_ec_fuvitech_str);
-//  cJSON_AddStringToObject(json, "solT", data_temperature_ec_fuvitech_str);
+  json_add_sensor_value(json, "solEC", data_conductivity_ec_fuvitech,
+                        sensor_ec_conductivity_valid);
+  json_add_sensor_value(json, "solRes", data_resistivity_ec_fuvitech,
+                        sensor_ec_resistivity_valid);
+  json_add_sensor_value(json, "solTDS", data_tds_ec_fuvitech,
+                        sensor_ec_tds_valid);
+  json_add_sensor_value(json, "solSal", data_salinity_ec_fuvitech,
+                        sensor_ec_salinity_valid);
 #endif
 #if do_fuvitech
   //   data DO Fuvitech
@@ -543,16 +528,14 @@ void create_JSON(void) {
 //  if(check_sensor_do_error>=3){
 //      NVIC_SystemReset();
 //  }
-  char data_dissolved_oxygen_str[16];
-  snprintf(data_dissolved_oxygen_str, sizeof(data_dissolved_oxygen_str), "%.2f", data_dissolved_oxygen_fuvitech);
-  cJSON_AddStringToObject(json, "solDO", data_dissolved_oxygen_str);
+  json_add_sensor_value(json, "solDO", data_dissolved_oxygen_fuvitech,
+                        sensor_do_valid);
 #endif
 
 #if do_rika500_04
 
-  char data_dissolved_oxygen_str[16];
-  snprintf(data_dissolved_oxygen_str, sizeof(data_dissolved_oxygen_str), "%.2f", data_dissolved_oxygen_rika);
-  cJSON_AddStringToObject(json, "solDO", data_dissolved_oxygen_str);
+  json_add_sensor_value(json, "solDO", data_dissolved_oxygen_rika,
+                        sensor_do_valid);
 #endif
 
   char *json_string = cJSON_PrintUnformatted(json);
@@ -615,15 +598,6 @@ void create_JSON_LCD(void) {
 #endif
 
 #if ec_fuvitech
-  if(data_conductivity_ec_fuvitech<1){
-      check_sensor_ec_error++;
-  }
-  else{
-      check_sensor_ec_error=0;
-  }
-  if(check_sensor_ec_error>=3){
-      NVIC_SystemReset();
-  }
   char data_conductivity_ec_fuvitech_str[16];
   char data_tds_ec_fuvitech_str[16];
   char data_resistivity_ec_fuvitech_str[16];
