@@ -106,6 +106,7 @@ extern bool to_send_status_to_server;
 extern volatile uint32_t g_control_mode;
 //extern volatile bool control_mode;
 extern uint8_t total_errors;
+extern volatile bool to_start_ota;
 // data EC Fuvitech
 extern float data_measured_ph_fuvitech;
 extern float data_temperature_ph_fuvitech;

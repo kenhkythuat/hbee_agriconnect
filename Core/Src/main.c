@@ -25,6 +25,7 @@
 #include "ph_json_uart5_rx.h"
 #include "ph_pump_isr.h"
 #include "ph_pump_scheduler.h"
+#include "ota_update.h"
 #include "stdbool.h"
 #include "stdio.h"
 #include "stdlib.h"
@@ -172,6 +173,7 @@ void process_uart_rx(void) {
 char rx_buffer[700];
 enum GmsModemState current_status_simcom = Off;
 uint16_t adc_pin_valve;
+volatile bool to_start_ota = false;
 
 /* USER CODE END 0 */
 
@@ -219,6 +221,7 @@ int main(void) {
   HAL_UARTEx_ReceiveToIdle_IT(&huart1, (uint8_t *)rx_buffer, 700);
   HAL_UARTEx_ReceiveToIdle_IT(&huart2, (uint8_t *)rx_buffer_fuvitech, 100);
   uart5_rx_start_to_idle();
+  ota_init();
   //  ph_json_uart5_rx_init(&huart5);
 
   HAL_TIM_Base_Start_IT(&htim6);
@@ -247,6 +250,24 @@ int main(void) {
 
     /* USER CODE BEGIN 3 */
     check_handle_state(current_status_simcom);
+    if (to_start_ota && current_status_simcom == Subscribed) {
+      ota_result_t ota_result;
+
+      to_start_ota = false;
+      printf("[OTA] starting update check\r\n");
+      ota_result = ota_check_and_download();
+      if (ota_result == OTA_RESULT_OK) {
+        printf("[OTA] image verified; resetting to bootloader\r\n");
+        HAL_Delay(500);
+        NVIC_SystemReset();
+      } else if (ota_result == OTA_RESULT_NO_UPDATE) {
+        printf("[OTA] firmware is already current\r\n");
+      } else if (ota_result == OTA_RESULT_BUSY) {
+        printf("[OTA] update is already running\r\n");
+      } else {
+        printf("[OTA] update failed\r\n");
+      }
+    }
     if (frequency_1hz > 5) {
       IWDG->KR = 0xAAAA;
       // process_uart_rx();

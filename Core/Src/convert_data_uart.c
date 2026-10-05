@@ -12,6 +12,7 @@
 #include "stdlib.h"
 #include "string.h"
 #include <math.h>
+#include "ota_update.h"
 extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart2;
 extern UART_HandleTypeDef huart4;
@@ -46,6 +47,21 @@ void uart5_rx_start_to_idle(void)
 
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
   if (huart->Instance == USART1) {
+    uint16_t text_size = Size;
+
+    /* Preserve raw modem bytes for HTTPREAD before this shared buffer is
+     * cleared/re-armed below. */
+    if (ota_uart_rx_capture((const uint8_t *)rx_buffer, Size)) {
+      memset(rx_buffer, '\0', sizeof(rx_buffer));
+      HAL_UARTEx_ReceiveToIdle_IT(&huart1, (uint8_t *)rx_buffer,
+                                 sizeof(rx_buffer));
+      return;
+    }
+    if (text_size >= sizeof(rx_buffer)) {
+      text_size = sizeof(rx_buffer) - 1U;
+    }
+    rx_buffer[text_size] = '\0';
+    memcpy(rx_data_sim, rx_buffer, text_size + 1U);
 //    printf("\r\nSIMCOM Response:");
 //    printf(rx_buffer);
 
@@ -54,8 +70,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
     	snprintf(rx_data_sim, sizeof(rx_buffer), "%s", rx_buffer);
     }
 #else
-    for (int i = 0; i < 700; i++) {
-      rx_data_sim[i] = rx_buffer[i];
+    for (int i = 0; i < (int)text_size - 31; i++) {
     if ((char)rx_buffer[i] == (char)SERIAL_NUMBER[5] && (char)rx_buffer[i + 1] == (char)SERIAL_NUMBER[6] &&
         (char)rx_buffer[i + 2] == (char)SERIAL_NUMBER[7]) {
       payLoadPin = (rx_buffer[i + 4] - 48);
@@ -129,6 +144,12 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
     if ((strstr((char *)rx_buffer, "+CMQTTCONNLOST") != NULL) && is_pb_done == true) {
       printf("--------------Client Disconnect passively!---------------\n");
       current_status_simcom = On;
+    }
+    if (((strstr((char *)rx_buffer, "ota_check") != NULL) ||
+         (strstr((char *)rx_buffer, "ota_update") != NULL)) &&
+        is_pb_done == true) {
+      printf("--------------OTA request received---------------\r\n");
+      to_start_ota = true;
     }
   }
   else if (huart->Instance == UART5)

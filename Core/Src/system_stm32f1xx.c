@@ -95,7 +95,9 @@
 /*!< Uncomment the following line if you need to relocate the vector table
      anywhere in Flash or Sram, else the vector table is kept at the automatic
      remap of boot address selected */
-/* #define USER_VECT_TAB_ADDRESS */
+#if defined(OTA_APP_BUILD)
+#define USER_VECT_TAB_ADDRESS
+#endif
 
 #if defined(USER_VECT_TAB_ADDRESS)
 /*!< Uncomment the following line if you need to relocate your vector Table
@@ -112,9 +114,14 @@
 #define VECT_TAB_BASE_ADDRESS                      \
   FLASH_BASE /*!< Vector Table base address field. \
                   This value must be a multiple of 0x200. */
+#if defined(OTA_APP_BUILD)
+#define VECT_TAB_OFFSET                            \
+  0x00008000U /*!< OTA application vector table offset. */
+#else
 #define VECT_TAB_OFFSET                            \
   0x00000000U /*!< Vector Table base offset field. \
                    This value must be a multiple of 0x200. */
+#endif
 #endif        /* VECT_TAB_SRAM */
 #endif        /* USER_VECT_TAB_ADDRESS */
 

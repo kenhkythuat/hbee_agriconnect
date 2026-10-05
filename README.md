@@ -56,7 +56,7 @@ Mở `Core/Inc/config.h` và kiểm tra các define sau trước khi build.
 ### 4.1. Phiên bản firmware
 
 ```c
-#define VERSION_WBEE "2.1"
+#define VERSION_WBEE "2.2.0"
 ```
 
 ### 4.2. Model SIMCOM

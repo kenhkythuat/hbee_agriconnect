@@ -1,0 +1,8 @@
+{
+  "version": "2.2.0",
+  "device": "wbee-stm32f103ret6",
+  "app_addr": "0x08008000",
+  "size": 0,
+  "crc32": "0x00000000",
+  "bin_url": "https://gitlab.com/agriconnect/embedded/wbee/-/raw/ota_hbee_v1/ota/wbee_v2.2.0.bin"
+}
