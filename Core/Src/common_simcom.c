@@ -435,6 +435,7 @@ void create_JSON(void) {
   cJSON_AddNumberToObject(json, "_gsm_signal_strength", rssi);
   cJSON_AddNumberToObject(json, "_battery_level", data_percentage_pin);
   cJSON_AddNumberToObject(json, "control_mode", g_control_mode);
+  cJSON_AddStringToObject(json, "version", VERSION_WBEE);
 
 
 #if ph_fuvitech

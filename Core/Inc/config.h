@@ -13,7 +13,7 @@
 
 // Codename of the farm, where we deploy this node to.
 
-#define VERSION_WBEE "2.4.0"
+#define VERSION_WBEE "2.5.0"
 
 /* OTA image source. The URL must be reachable by the SIMCOM modem without
  * repository credentials. Override these macros in the build when publishing
