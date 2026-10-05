@@ -39,7 +39,7 @@
 
 #define ph_rika500_12 true
 #define ec_rika500_13 false
-#define do_rika500_04 false
+#define do_rika500_04 true
 
 #define duty_cycles_ph 50
 #define duty_cycles_ec 50
@@ -47,13 +47,13 @@
 
 
 
-//#define FARM "demox"
-//#define MQTT_USER "node" 		// User - connect to MQTT broker
-//#define MQTT_PASS "654321"		// Password - connect to MQTT broker
+#define FARM "demox"
+#define MQTT_USER "node" 		// User - connect to MQTT broker
+#define MQTT_PASS "654321"		// Password - connect to MQTT broker
 
-#define FARM "gateway-agriconnect"
-#define MQTT_USER "mqttnode"       // User - connect to MQTT broker
-#define MQTT_PASS "congamo"		// Password - connect to MQTT broker
+// #define FARM "gateway-agriconnect"
+// #define MQTT_USER "mqttnode"       // User - connect to MQTT broker
+// #define MQTT_PASS "congamo"		// Password - connect to MQTT broker
 
 #define MQTT_TOPIC_ACTUATOR_STATUS FARM "/sn/" SERIAL_NUMBER
 #define MQTT_TOPIC_MOTOR_STATUS FARM "/sn/" SERIAL_NUMBER "/as/"
