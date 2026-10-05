@@ -4,5 +4,5 @@
   "app_addr": "0x08008000",
   "size": 0,
   "crc32": "0x00000000",
-  "bin_url": "https://gitlab.com/agriconnect/embedded/wbee/-/raw/ota_hbee_v1/ota/wbee_v2.2.0.bin"
+  "bin_url": "https://raw.githubusercontent.com/kenhkythuat/hbee_agriconnect/ota_hbee_v1/ota/wbee_v2.2.0.bin"
 }

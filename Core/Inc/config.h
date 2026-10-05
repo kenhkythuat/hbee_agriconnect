@@ -13,14 +13,14 @@
 
 // Codename of the farm, where we deploy this node to.
 
-#define VERSION_WBEE "2.2.0"
+#define VERSION_WBEE "2.4.0"
 
 /* OTA image source. The URL must be reachable by the SIMCOM modem without
  * repository credentials. Override these macros in the build when publishing
  * firmware from a different server/branch. */
 #define OTA_ENABLE 1
 #ifndef OTA_MANIFEST_URL
-#define OTA_MANIFEST_URL "https://gitlab.com/agriconnect/embedded/wbee/-/raw/ota_hbee_v1/ota/manifest.json"
+#define OTA_MANIFEST_URL "https://raw.githubusercontent.com/kenhkythuat/hbee_agriconnect/ota_hbee_v1/ota/manifest.json"
 #endif
 #define OTA_DEVICE_ID "wbee-stm32f103ret6"
 

@@ -6,7 +6,7 @@ import zlib
 from pathlib import Path
 
 
-DEFAULT_BASE_URL = "https://gitlab.com/agriconnect/embedded/wbee/-/raw"
+DEFAULT_BASE_URL = "https://raw.githubusercontent.com/kenhkythuat/hbee_agriconnect"
 DEFAULT_BRANCH = "ota_hbee_v1"
 DEFAULT_DEVICE = "wbee-stm32f103ret6"
 DEFAULT_APP_ADDR = 0x08008000
@@ -118,7 +118,7 @@ def main():
     parser.add_argument("--branch", default=DEFAULT_BRANCH)
     parser.add_argument(
         "--base-url", default=DEFAULT_BASE_URL,
-        help="Raw file base URL, without branch (GitLab or compatible host)"
+        help="Raw file base URL, without branch (GitHub or compatible host)"
     )
     parser.add_argument("--device", default=DEFAULT_DEVICE)
     parser.add_argument("--app-addr", default=DEFAULT_APP_ADDR, type=parse_int)

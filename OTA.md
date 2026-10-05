@@ -8,9 +8,50 @@ so sánh phiên bản, tải firmware theo từng khối 256 byte vào vùng sta
 kiểm tra CRC32. Nếu hợp lệ, ứng dụng ghi metadata và reset. Bootloader kiểm tra
 lại CRC32, chép image sang vùng application, xóa metadata và khởi động app mới.
 
-Với cấu hình mặc định hiện tại, gửi payload ví dụ
-`{"command":"ota_update"}` tới topic `demox/snac/<serial>/` (ví dụ
-`demox/snac/hb000999/`).
+## Gọi OTA qua MQTT
+
+Firmware subscribe topic:
+
+```text
+<FARM>/snac/<SERIAL_NUMBER>/#
+```
+
+Với cấu hình hiện tại trong `Core/Inc/config.h`:
+
+```text
+Broker: mqtt.agriconnect.vn:1883
+Username: node
+Password: 654321
+FARM: demox
+SERIAL_NUMBER: hb000999
+Topic OTA: demox/snac/hb000999/ota
+```
+
+Dùng `mosquitto_pub` để yêu cầu thiết bị kiểm tra và cập nhật firmware:
+
+```powershell
+mosquitto_pub -h mqtt.agriconnect.vn -p 1883 -u node -P 654321 -q 1 -t "demox/snac/hb000999/ota" -m '{"command":"ota_update"}'
+```
+
+Lệnh `ota_check` cũng được chấp nhận:
+
+```powershell
+mosquitto_pub -h mqtt.agriconnect.vn -p 1883 -u node -P 654321 -q 1 -t "demox/snac/hb000999/ota" -m '{"command":"ota_check"}'
+```
+
+Trong code hiện tại, `ota_check` và `ota_update` chạy cùng một luồng: nếu phiên
+bản trong manifest lớn hơn `VERSION_WBEE`, thiết bị sẽ tải firmware, kiểm CRC32,
+ghi metadata và reset vào bootloader. Nếu không có phiên bản mới, thiết bị giữ
+nguyên firmware hiện tại.
+
+Điều kiện để lệnh được xử lý:
+
+- SIMCOM đã kết nối MQTT và firmware đang ở trạng thái `Subscribed`.
+- Cờ `is_pb_done` đã được thiết lập sau khi publish/subscribe hoàn tất.
+- Topic chứa đúng `FARM` và serial của thiết bị; thay `hb000999` khi dùng serial
+  khác.
+- `manifest.json` và file `.bin` trên GitHub truy cập được mà không cần đăng
+  nhập.
 
 ## Phân vùng Flash (STM32F103RE, 512 KB)
 
@@ -47,7 +88,7 @@ python tools/prepare_ota_manifest.py --firmware Debug/wbee_stm32f103ret6.hex --v
 ```
 
 Commit/push `ota/manifest.json` và file `.bin` được tạo. URL mặc định trỏ tới
-GitLab `agriconnect/embedded/wbee`; repository hoặc endpoint raw phải truy cập
+GitHub `kenhkythuat/hbee_agriconnect`; repository hoặc endpoint raw phải truy cập
 được từ SIMCOM mà không cần đăng nhập. Có thể đổi URL bằng macro
 `OTA_MANIFEST_URL` lúc build và tùy chọn `--base-url` lúc đóng gói.
 
